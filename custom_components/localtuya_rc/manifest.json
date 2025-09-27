@@ -2,8 +2,9 @@
   "domain": "localtuya_rc",
   "name": "🗿• TuyaRC+",
   "codeowners": [
-    "@clusterm",
-    "@Bitte-ein-Git"
+    "@Bitte-ein-Git",
+    "@elias1731",
+    "@clusterm"
   ],
   "config_flow": true,
   "dependencies": [],
@@ -11,5 +12,5 @@
   "iot_class": "local_polling",
   "issue_tracker": "https://github.com/Bitte-ein-Git/ha_tuyarc/issues",
   "requirements": ["tinytuya>=1.17.4"],
-  "version": "1.0.0-dev"
+  "version": "1.1.0-dev"
 }

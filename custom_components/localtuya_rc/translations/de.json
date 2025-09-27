@@ -1,0 +1,89 @@
+{
+    "title": "🗿• TuyaRC+",
+    "config": {
+        "abort": {
+            "already_configured": "Fehler: Gerät bereits konfiguriert.",
+            "unknown": "Unbekannter Fehler, checke die logs."
+        },
+        "error": {
+            "cannot_connect": "Es konnte keine Verbindung hergestellt werden. Prüfe, ob die Einstellungen korrekt sind.",
+            "no_control_type": "IR Control Type unbekannt. Versuche eine andere Option! (Wenn der Fehler bestehen bleibt, Gerät nicht unterstützt.)",
+            "tuya_not_found": "Keine Tuya Geräte gefunden. Stelle sicher, dass es online und mit demselben Netzwerk verbunden ist und versuche es erneut.",
+            "cloud_error": "Fehler beim Verbinden mit der Tuya Cloud. Bitte überprüfe deine Konfiguration.",
+            "cloud_unauthorized": "Keine Berechtigung für den Zugriff auf die Tuya Cloud. Bitte überprüfe deine Konfiguration: API-Schlüssel und API-Geheimnis.",
+            "cloud_no_devices": "Keine Tuya-Geräte in der Cloud gefunden. Bitte überprüfe deine Konfiguration, stelle sicher, dass du das richtige Konto verknüpft und die richtige Region ausgewählt hast.",
+            "unknown": "Unbekannter Fehler, bitte überprüfe die Logs."
+        },
+        "step": {
+            "method": {
+                "title": "🗿• TuyaRC+",
+                "description": "Diese Integration ermöglicht es dir, deine universelle Tuya IR-Remote lokal mit Home Assistant zu verwenden, ohne die Tuya-Cloud zu benötigen.\n\nUm auf deine Tuya IR-Remote zuzugreifen, benötigen wir dessen lokalen Verschlüsselungsschlüssel. Dieser Schritt kann etwas knifflig sein, weitere Informationen findest du in der Dokumentation.\n\nBitte wähle die Methode aus, mit der du deine Tuya IR-Remote konfigurieren möchtest.",
+                "menu_options": {
+                    "cloud": "Local Key über die Tuya Cloud API beziehen",
+                    "ip_method": "Local Key manuell eingeben"
+                }
+            },
+            "cloud": {
+                "title": "Tuya Cloud API",
+                "description": "Um den Local Key zu erhalten, müssen wir uns mit der Tuya Cloud verbinden. Bitte gib deine Tuya Cloud API Client ID und dein Client Secret ein. Weitere Informationen findest du in der Dokumentation.",
+                "data": {
+                    "region": "Region",
+                    "client_id": "Client ID",
+                    "client_secret": "Client Secret"
+                }
+            },
+            "ip_method": {
+                "title": "Wie erhalte ich die IP-Adresse des Geräts?",
+                "description": "Um die IP-Adresse des Geräts zu erhalten, kannst du entweder dein lokales Netzwerk scannen oder sie manuell eingeben.",
+                "menu_options": {
+                    "pre_scan": "Lokales Netzwerk scannen (empfohlen)",
+                    "ask_ip": "IP-Adresse manuell eingeben",
+                    "config": "IP-Adresse manuell eingeben"
+                }
+            },
+            "ask_ip": {
+                "title": "Geräte-IP eingeben",
+                "description": "Bitte gib die IP-Adresse deiner Tuya IR-Remotes ein und wähle das entsprechende Gerät aus der Tuya Cloud aus.",
+                "data": {
+                    "host": "Geräte-IP",
+                    "device_id": "Gerätename"
+                }
+            },
+            "pre_scan": {
+                "title": "Netzwerk-Scan",
+                "description": "Wir müssen dein Gerät jetzt im Netzwerk finden. Das kann bis zu 30 Sekunden dauern."
+            },
+            "scan": {
+                "title": "Gerät auswählen",
+                "description": "Bitte wähle die IP-Adresse deiner Tuya IR-Remotes aus.",
+                "data": {
+                    "host": "Geräte-IP"
+                }
+            },
+            "config": {
+                "title": "Tuya IR-Remote konfigurieren",
+                "description": "Bitte gib die IP-Adresse, Device-ID und den Local Key deiner IR-Remote ein.",
+                "data": {
+                    "name": "Gerätename",
+                    "host": "Host",
+                    "device_id": "Device ID",
+                    "local_key": "Local key",
+                    "protocol_version": "Protokollversion (meistens 3.3 oder 3.4)",
+                    "persistent_connection": "Dauerhafte Verbindung (schneller, aber kann instabil sein)",
+                    "control_type": "Steuerungstyp"
+                }
+            }
+        }
+    },
+    "options": {
+        "step": {
+            "init": {
+                "title": "Tuya IR-Remote konfigurieren",
+                "data": {
+                    "persistent_connection": "Verbindung halten (schneller, aber kann instabil sein)",
+                    "control_type": "Steuerungstyp"
+                }
+            }
+        }
+    }
+}
