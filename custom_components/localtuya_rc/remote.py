@@ -14,10 +14,12 @@ from .const import (
     CONF_PROTOCOL_VERSION,
     CONF_CLOUD_INFO,
     CONF_PERSISTENT_CONNECTION,
+    CONF_CONTROL_TYPE,
     CODE_STORAGE_VERSION,
     CODE_STORAGE_CODES,
     NOTIFICATION_TITLE,
-    DEFAULT_PERSISTENT_CONNECTION
+    DEFAULT_PERSISTENT_CONNECTION,
+    DEFAULT_CONTROL_TYPE
 )
 
 from homeassistant.const import (
@@ -55,6 +57,7 @@ PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
                 ["3.1", "3.2", "3.3", "3.4", "3.5"]
             ),
             vol.Required(CONF_PERSISTENT_CONNECTION, default=DEFAULT_PERSISTENT_CONNECTION): cv.boolean,
+            vol.Required(CONF_CONTROL_TYPE, default=DEFAULT_CONTROL_TYPE): cv.string,
     }
 )
 
@@ -71,7 +74,7 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     if config == None:
         _LOGGER.error("Configuration is empty")
         return
-    
+
     name = config.get(CONF_NAME, DEFAULT_FRIENDLY_NAME)
     dev_id = config.get(CONF_DEVICE_ID)
     host = config.get(CONF_HOST)
@@ -79,14 +82,16 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
     protocol_version = config.get(CONF_PROTOCOL_VERSION)
     cloud_info = config.get(CONF_CLOUD_INFO, None)
     persistent_connection = config.get(CONF_PERSISTENT_CONNECTION, DEFAULT_PERSISTENT_CONNECTION)
+    control_type = config.get(CONF_CONTROL_TYPE, DEFAULT_CONTROL_TYPE)
+
 
     if name is None or host is None or dev_id is None or local_key is None:
         _LOGGER.error("Missing required configuration items")
         return
 
-    _LOGGER.debug("Setting up Tuya IR Remote Control: name=%s, dev_id=%s, host=%s, local_key=%s, protocol_version=%s, persistent_connection=%s, cloud_info=%s", name, dev_id, host, local_key, protocol_version, persistent_connection, cloud_info)
+    _LOGGER.debug("Setting up 🗿• TuyaRC +: name=%s, dev_id=%s, host=%s, local_key=%s, protocol_version=%s, persistent_connection=%s, control_type=%s, cloud_info=%s", name, dev_id, host, local_key, protocol_version, persistent_connection, control_type, cloud_info)
 
-    remote = TuyaRC(name, dev_id, host, local_key, protocol_version, persistent_connection, cloud_info)
+    remote = TuyaRC(name, dev_id, host, local_key, protocol_version, persistent_connection, control_type, cloud_info)
     # Update availability of the device
     await hass.async_add_executor_job(remote._update_availibility)
 
@@ -94,15 +99,16 @@ async def async_setup_platform(hass, config, async_add_entities, discovery_info=
 
 
 class TuyaRC(RemoteEntity):
-    def __init__(self, name, dev_id, address, local_key, protocol_version, persistent_connection=DEFAULT_PERSISTENT_CONNECTION, cloud_info=None):
+    def __init__(self, name, dev_id, address, local_key, protocol_version, persistent_connection=DEFAULT_PERSISTENT_CONNECTION, control_type=DEFAULT_CONTROL_TYPE, cloud_info=None):
         self._name = name
         self._dev_id = dev_id
         self._address = address
         self._local_key = local_key
         self._protocol_version = protocol_version
         self._persistent_connection = persistent_connection
+        self._control_type = control_type
         self._cloud_info = cloud_info
-        
+
         self._storage = None
         self._codes = {}
         self._available = False
@@ -114,9 +120,13 @@ class TuyaRC(RemoteEntity):
     def _init(self):
         if self._device:
             return
-        _LOGGER.debug("Initializing device %s (address: %s, local_key: %s, protocol_version: %s, persistent_connection: %s)...", self._dev_id, self._address, self._local_key, self._protocol_version, self._persistent_connection)
-        self._device = Contrib.IRRemoteControlDevice(dev_id=self._dev_id, address=self._address, local_key=self._local_key, version=float(self._protocol_version), persist=self._persistent_connection)
-        _LOGGER.debug("Initializing device %s (address: %s, local_key: %s, protocol_version: %s, persistent_connection: %s)...", self._dev_id, self._address, self._local_key, self._protocol_version, self._persistent_connection)
+        _LOGGER.debug("Initializing device %s (address: %s, local_key: %s, protocol_version: %s, persistent_connection: %s, control_type: %s)...", self._dev_id, self._address, self._local_key, self._protocol_version, self._persistent_connection, self._control_type)
+        control_type = 0
+        if self._control_type == "Older devices (DPS 201/202)":
+            control_type = 1
+        elif self._control_type == "Newer devices (DPS 1-13)":
+            control_type = 2
+        self._device = Contrib.IRRemoteControlDevice(dev_id=self._dev_id, address=self._address, local_key=self._local_key, version=float(self._protocol_version), persist=self._persistent_connection, control_type=control_type)
         self._device_RF = RFRemoteControlDevice.RFRemoteControlDevice(dev_id=self._dev_id, address=self._address, local_key=self._local_key, version=float(self._protocol_version), persist=self._persistent_connection)
         _LOGGER.debug("Device %s initialized.", self._dev_id)
 
@@ -187,7 +197,7 @@ class TuyaRC(RemoteEntity):
             except Exception as e:
                 _LOGGER.error("Failed to receive button, exception %s: %s", type(e), e, exc_info=True)
                 raise HomeAssistantError("tinytuya library internal error, please check the logs.")
-    
+
     def _send_button(self, pulses):
         with self._lock:
             try:
@@ -211,7 +221,7 @@ class TuyaRC(RemoteEntity):
             except Exception as e:
                 self._deinit()
                 raise e
-    
+
     def _receive_button_rf(self, timeout):
         with self._lock:
             self._init()
@@ -220,7 +230,7 @@ class TuyaRC(RemoteEntity):
             except Exception as e:
                 _LOGGER.error("Failed to receive RF button, exception %s: %s", type(e), e, exc_info=True)
                 raise HomeAssistantError("tinytuya library internal rf error, please check the logs.")
-    
+
     def _send_button_rf(self, base64):
         with self._lock:
             try:
@@ -276,10 +286,10 @@ class TuyaRC(RemoteEntity):
         repeat = kwargs.get(ATTR_NUM_REPEATS, 1)
         repeat_delay = kwargs.get(ATTR_DELAY_SECS, 0)
         hold = kwargs.get(ATTR_HOLD_SECS, 0)
-        
+
         if hold != 0:
             raise NotImplementedError("Hold time is not supported.")
-        
+
         try:
             await self._async_load_storage_files()
             for n in range(repeat):
@@ -319,7 +329,7 @@ class TuyaRC(RemoteEntity):
 
         command = commands[0]
         notification_id = "learn_command_" + self._dev_id + "_" + str(device) + "_" + command
-        
+
         try:
             if not command: raise ValueError("You need to specify a command name to learn.")
             if command_type != "ir" and command_type != "rf": raise NotImplementedError(f'Unknown command type "{command_type}", only "ir" and "rf" is supported.')
@@ -332,7 +342,7 @@ class TuyaRC(RemoteEntity):
                 title=NOTIFICATION_TITLE,
                 notification_id=notification_id,
             )
-            
+
             _LOGGER.debug(f"Waiting for button press...")
             if command_type == "ir":
                 button = await self.hass.async_add_executor_job(self._receive_button, timeout)
@@ -346,7 +356,7 @@ class TuyaRC(RemoteEntity):
             if not isinstance(button, str):
                 self._deinit()
                 raise ValueError(f"Invalid response: {button}")
-            
+
             if command_type == "ir":
                 pulses = Contrib.IRRemoteControlDevice.base64_to_pulses(button)
                 if len(pulses) < 4:
@@ -361,7 +371,7 @@ class TuyaRC(RemoteEntity):
                 decoded_raw = "rfraw:" + button
                 direct_code_example = f'<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded}</pre>'
                 direct_code_example_raw = f'If code above is not working, you can try to use the raw code:\n<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded_raw}</pre>But <a href="https://github.com/Bitte-ein-Git/ha_tuyarc/issues">create a bug report</a> in such case, please.'
-            
+
             if device:
                 await self._async_load_storage_files()
                 self._codes.setdefault(device, {}).update({command: decoded})
@@ -380,7 +390,7 @@ class TuyaRC(RemoteEntity):
                     "\n\nNow you can use this code in your automations and scripts with the 'remote.send_command' service. Example:" + \
                     direct_code_example + \
                     (f"\n\n{direct_code_example_raw}" if not decoded.startswith("raw:") else "")
-                
+
             if decoded.startswith("raw:"):
                 msg += "\r\n\r\n<b>Warning</b>: this command is learned in raw format, e.g. it can't be decoded using known protocol decoders. It's better to try to learn the command again but it's ok if you keep seeing this message."
 
@@ -404,7 +414,7 @@ class TuyaRC(RemoteEntity):
         """Delete a command from a device."""
         device = kwargs.get(ATTR_DEVICE, None)
         commands = kwargs.get(ATTR_COMMAND, [])
-        
+
         if not device:
             raise HomeAssistantError("You need to specify a device.")
 

@@ -1,4 +1,4 @@
-"""LocalTuyaIR Remote Control integration."""
+"""🗿• TuyaRC + integration."""
 import logging
 import voluptuous as vol
 import homeassistant.helpers.config_validation as cv

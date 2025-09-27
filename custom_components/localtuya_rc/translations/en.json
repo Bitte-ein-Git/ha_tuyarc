@@ -1,5 +1,5 @@
 {
-    "title": "LocalTuyaIR Remote Control",
+    "title": "🗿• TuyaRC +",
     "config": {
         "abort": {
             "already_configured": "Error: integration for this device is already configured.",
@@ -7,7 +7,7 @@
         },
         "error": {
             "cannot_connect": "Cannot connect to the device. Verify that address, device id, local key and protocol version are correct.",
-            "no_control_type": "Can't detect control type. Maybe the device is not supported, sorry.",
+            "no_control_type": "Unknown control type. Try using a manual option! (If the error persists, maybe the device is not supported)",
             "tuya_not_found": "No Tuya devices found. Make sure that it's online and connected to the same network and try again.",
             "cloud_error": "Error while connecting to the Tuya cloud. Please check your configuration.",
             "cloud_unauthorized": "Unauthorized to access the Tuya cloud. Please check your configuration: API key and API secret.",
@@ -16,7 +16,7 @@
         },
         "step": {
             "method": {
-                "title": "LocalTuyaIR Remote Control",
+                "title": "🗿• TuyaRC +",
                 "description": "This integration will allow you use your Tuya universal remote control device with Home Assistant locally, without the need for the Tuya cloud.\n\nTo access your Tuya Remote Control device, we need to know its local encryption key. This step can be a bit tricky, so please see the documentation for more information.\n\nPlease select the method you want to use to configure your Tuya Remote Control device.",
                 "menu_options": {
                     "cloud": "Obtain the local key using the Tuya Cloud API",
@@ -34,7 +34,7 @@
             },
             "ip_method": {
                 "title": "How to obtain the device IP address",
-                "description": "To obtain the device IP address, you can either scan your local network or enter it manually.",                
+                "description": "To obtain the device IP address, you can either scan your local network or enter it manually.",
                 "menu_options": {
                     "pre_scan": "Scan the local network (recommended)",
                     "ask_ip": "Enter the IP address manually",
@@ -69,7 +69,8 @@
                     "device_id": "Device ID",
                     "local_key": "Local key",
                     "protocol_version": "Protocol version (usually 3.3 or 3.4)",
-                    "persistent_connection": "Persistent connection (faster but can be unstable)"
+                    "persistent_connection": "Persistent connection (faster but can be unstable)",
+                    "control_type": "IR Control Type"
                 }
             }
         }
@@ -79,7 +80,8 @@
             "init": {
                 "title": "Configure your Tuya Remote Control device",
                 "data": {
-                    "persistent_connection": "Persistent connection (faster but can be unstable)"
+                    "persistent_connection": "Persistent connection (faster but can be unstable)",
+                    "control_type": "IR Control Type"
                 }
             }
         }
