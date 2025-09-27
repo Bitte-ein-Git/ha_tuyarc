@@ -1,0 +1,26 @@
+name: "🌀 » Release '🗿• TuyaRC+' integration"
+
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  release-zip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: ZIP Component Dir
+        run: |
+          cd ${{ github.workspace }}/custom_components/localtuya_rc
+          zip -r ha_tuyarc.zip ./
+
+      - name: Upload zip to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: ${{ github.workspace }}/custom_components/localtuya_rc/ha_tuyarc.zip
+          asset_name: ha_tuyarc.zip
+          tag: ${{ github.ref }}
+          overwrite: true

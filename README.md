@@ -30,7 +30,7 @@ Or follow these steps:
 
 #### Manual Installation
 If you prefer manual installation or are not using HACS, follow these steps:
-* Visit the [Releases](https://github.com/ClusterM/localtuya_rc/releases) page of the integration's GitHub repository.
+* Visit the [Releases](https://github.com/Bitte-ein-Git/ha_tuyarc/releases) page of the integration's GitHub repository.
 * Download the latest .zip file.
 * Unzip the downloaded file.
 * Locate the "localtuya_rc" directory inside the extracted contents (in "custom_components" directory).

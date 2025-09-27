@@ -355,12 +355,12 @@ class TuyaRC(RemoteEntity):
                 decoded_raw = rc_auto_decode(pulses, force_raw=True)
 
                 direct_code_example = f'<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded}</pre>'
-                direct_code_example_raw = f'If code above is not working, you can try to use the raw code:\n<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded_raw}</pre>But <a href="https://github.com/ClusterM/localtuya_rc/issues">create a bug report</a> in such case, please.'
+                direct_code_example_raw = f'If code above is not working, you can try to use the raw code:\n<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded_raw}</pre>But <a href="https://github.com/Bitte-ein-Git/ha_tuyarc/issues">create a bug report</a> in such case, please.'
             elif command_type == "rf":
                 decoded = "rf:" + button
                 decoded_raw = "rfraw:" + button
                 direct_code_example = f'<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded}</pre>'
-                direct_code_example_raw = f'If code above is not working, you can try to use the raw code:\n<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded_raw}</pre>But <a href="https://github.com/ClusterM/localtuya_rc/issues">create a bug report</a> in such case, please.'
+                direct_code_example_raw = f'If code above is not working, you can try to use the raw code:\n<pre>service: remote.send_command\ntarget:\n  entity_id: {self.entity_id}\ndata:\n  command: {decoded_raw}</pre>But <a href="https://github.com/Bitte-ein-Git/ha_tuyarc/issues">create a bug report</a> in such case, please.'
             
             if device:
                 await self._async_load_storage_files()
